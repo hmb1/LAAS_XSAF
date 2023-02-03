@@ -1,0 +1,4 @@
+XSAF_ch 1
+SpecSAF_ch 1
+FNF_ch 0
+Camb_ch 0
