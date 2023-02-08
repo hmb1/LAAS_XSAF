@@ -1277,6 +1277,37 @@ void XC::Fisher(string probe, string Fisher_matrix_name, int lcut_mn, int lcut_p
 		i++;
 	}
 
+    if(1) {
+        cout<<"zrange.size()="<<zrange.size()<<endl;
+        cout<<"Dim_X="<<Dim_x<<endl;
+        cout<<"Dim_y="<<Dim_y<<endl;
+        cout<<"lsize="<<lsize<<endl;
+        cout<<"lsize2="<<lsize2<<endl;
+        cout<<"relat_index="<<relat_index<<endl;
+        cout<<"fsky="<<fsky<<endl;
+        cout<<"delta_l="<<delta_l<<endl;
+
+
+        cout<<"l_new={ ";
+        for(auto val: l_new)
+            cout<<val<<" ";
+        cout<<"}"<<endl;
+
+        cout<<"steps_all={ ";
+        for(auto val: steps_all)
+            cout<<val<<" ";
+        cout<<"}"<<endl;
+
+        cout<<"fid_all={ ";
+        for(auto val: fid_all)
+            cout<<val<<" ";
+        cout<<"}"<<endl;
+
+
+
+    }
+
+
     // STEP A C_ij 2D Variables
 	vector<vector<double>> C_ij_ABCD_GG(zrange.size(), vector<double>(zrange.size(), 0));
 	vector<vector<double>> C_ij_ABCD_LL(zrange.size(), vector<double>(zrange.size(), 0));
@@ -1306,16 +1337,18 @@ void XC::Fisher(string probe, string Fisher_matrix_name, int lcut_mn, int lcut_p
     vector<double> CC_GGGG_D(pow(Dim_x,2), 0);
     vector<double> CC_LLLL(pow(Dim_x,2), 0);
     vector<double> CC_LLLL_D(pow(Dim_x,2), 0);
-    vector<double> CC_GLGL(pow(Dim_y,2), 0);
-    vector<double> CC_GLGL_D(pow(Dim_y,2), 0);
-    vector<double> CC_GGGL(Dim_x*Dim_y, 0);
-    vector<double> CC_GGGL_D(Dim_x*Dim_y, 0);
     vector<double> CC_GGLL(pow(Dim_x,2), 0);
     vector<double> CC_GGLL_D(pow(Dim_x,2), 0);
-    vector<double> CC_GLGG(Dim_x*Dim_y, 0);
-    vector<double> CC_GLGG_D(Dim_x*Dim_y, 0);
     vector<double> CC_LLGG(pow(Dim_x,2), 0);
     vector<double> CC_LLGG_D(pow(Dim_x,2), 0);
+
+    vector<double> CC_GLGL(pow(Dim_y,2), 0);
+    vector<double> CC_GLGL_D(pow(Dim_y,2), 0);
+
+    vector<double> CC_GGGL(Dim_x*Dim_y, 0);
+    vector<double> CC_GGGL_D(Dim_x*Dim_y, 0);
+    vector<double> CC_GLGG(Dim_x*Dim_y, 0);
+    vector<double> CC_GLGG_D(Dim_x*Dim_y, 0);
     vector<double> CC_GLLL(Dim_x*Dim_y, 0);
     vector<double> CC_GLLL_D(Dim_x*Dim_y, 0);
     vector<double> CC_LLGL(Dim_x*Dim_y, 0);
@@ -1348,12 +1381,13 @@ void XC::Fisher(string probe, string Fisher_matrix_name, int lcut_mn, int lcut_p
 	vector<vector<double>> CO_CL_AB(lsize*(2*Dim_x+Dim_y), vector<double>(lsize*(2*Dim_x+Dim_y), 0));
 	vector<vector<double>> CO_I(lsize*(2*Dim_x+Dim_y), vector<double>(lsize*(2*Dim_x+Dim_y), 0));
 	vector<vector<double>> CO_CL_D(lsize*(2*Dim_x+Dim_y), vector<double>(lsize*(2*Dim_x+Dim_y), 0));
+    vector<vector<double>> CO_CL_ref(lsize*(2*Dim_x+Dim_y), vector<double>(lsize*(2*Dim_x+Dim_y), 0));
+
 	vector<vector<double>> CO_CL_WL(lsize2*Dim_x, vector<double>(lsize2*Dim_x, 0));
 	vector<vector<double>> CO_CL_WL_AB(lsize2*Dim_x, vector<double>(lsize2*Dim_x, 0));
 	vector<vector<double>> CO_WL_I(lsize2*Dim_x, vector<double>(lsize2*Dim_x, 0));
 	vector<vector<double>> CO_CL_WL_D(lsize2*Dim_x, vector<double>(lsize2*Dim_x, 0));
-	vector<vector<double>> CO_CL_ref(lsize*(2*Dim_x+Dim_y), vector<double>(lsize*(2*Dim_x+Dim_y), 0));
-	vector<vector<double>> CO_CL_WL_ref(lsize2*Dim_x, vector<double>(lsize2*Dim_x, 0));
+    vector<vector<double>> CO_CL_WL_ref(lsize2*Dim_x, vector<double>(lsize2*Dim_x, 0));
 
 	for(int i=0; i<CO_I.size(); i++){
 		CO_I[i][i] = 1.;
@@ -1422,13 +1456,12 @@ void XC::Fisher(string probe, string Fisher_matrix_name, int lcut_mn, int lcut_p
                 ifile_ABCD_LL_up_PX.close(); ifile_ABCD_LL_dw_PX.close(); ifile_ABCD_LL_up_PY.close(); ifile_ABCD_LL_dw_PY.close();
                 ifile_ABCD_GL_up_PX.close(); ifile_ABCD_GL_dw_PX.close(); ifile_ABCD_GL_up_PY.close(); ifile_ABCD_GL_dw_PY.close();
 
-				I_55=0; I_100=0; I_rect_I1=0; I_rect_I2=0; I_rect_I3=0; I_rect_I4=0;
-
-
 
                 /***************************************************************************************************************************
                 *  STEP B1    CC_*  1D variables populate
                 ***************************************************************************************************************************/
+                I_55=0; I_100=0; I_rect_I1=0; I_rect_I2=0; I_rect_I3=0; I_rect_I4=0;
+
                 for(int I1=0; I1 < zrange.size(); I1++){
 			        for(int I2=0; I2 < zrange.size(); I2++){
 			            for(int I3=0; I3 < zrange.size(); I3++){
@@ -1535,6 +1568,11 @@ void XC::Fisher(string probe, string Fisher_matrix_name, int lcut_mn, int lcut_p
 			            }
 			        }
 			    }
+
+                //Debug
+                if(1) {
+                    cout<<" I_rect_I1="<<I_rect_I1<<" I_rect_I2="<<I_rect_I2<< " I_rect_I3="<<I_rect_I3<< " I_rect_I4="<<I_rect_I4<< " I_55="<<I_55<<" I_100="<<I_100<<endl;
+                }
                 /***************************************************************************************************************************
                 *  STEP C1   make  CC_* 2D variables from CC_* 1D variables
                 ***************************************************************************************************************************/
@@ -1590,7 +1628,17 @@ void XC::Fisher(string probe, string Fisher_matrix_name, int lcut_mn, int lcut_p
                 /***************************************************************************************************************************
                 *  STEP D1  CO_CL, CO_CL_D variables populate from  CC_* 2D variables
                 ***************************************************************************************************************************/
-			    for(int z1=0; z1<Dim_x; z1++){
+                /* Memory layout for CO_CL(2*dim_x+dim_y, 2*dim_x+dim_y) and CO_CL_D(2*dim_x+dim_y,(2*dim_x+dim_y)
+                  horizontal is the first index, vertical is the second index
+
+                   GGGL(dim_x,dim_y)   LLGL(dim_X, Dim_y)  GLGL(dim_y,dim_y)
+                   GGLL(dim_x, dim_x)  LLLL(dim_x,dim_x)  GLLL(dim_y, dim_x)
+                   GGGG(dim_x, dim_x)  LLGG(dim_x,dim_x)  GLGG(dim_y, dim_x)
+                */
+                /* The CC_*_R  arrays go into CO_CL
+                 * the CC_*_DR arrays g into CO_CL_D
+                */
+                for(int z1=0; z1<Dim_x; z1++){
 			    	for(int z2=0; z2<Dim_x; z2++){
 			    		if(FX == 0 && FY == 0){
 			            	CO_CL[z1*lsize+lll][z2*lsize+lll] = CC_GGGG_R[z1][z2];
@@ -1637,17 +1685,30 @@ void XC::Fisher(string probe, string Fisher_matrix_name, int lcut_mn, int lcut_p
 			    }
 			} // end BIG  for lll loop
 
-
+            /***************************************************************************************************************************
+            *  STEP E1  if probe is "GCp" or "Wl"  then
+             *              CO_CL and CO_CL_D are truncated to (lsize*Dim_x, lsize*Dim_x)
+             *             in addition if FX==0 && FY==0 then
+             *              CO_I is truncated;
+             *              CO_CL_AB is truncated and all values set to 0.0
+            ***************************************************************************************************************************/
 			if(probe == "GCp"){
 				if(FX == 0 && FY == 0){
 					vector<vector<double>> CO_CL_temp(lsize*Dim_x, vector<double>(lsize*Dim_x, 0));
-					CO_CL_AB = CO_CL_temp; CO_I = CO_CL_temp;
+                    // This innocent code overwrites CO_CL_AB and CO_I
+                    // from ( lsize*(2*Dim_x+Dim_y), lsize*(2*Dim_x+Dim_y)  )   to (lsize*Dim_x, lsize*Dim_x)
+                    // and sets all values to 0.0
+					CO_CL_AB = CO_CL_temp;
+                    CO_I = CO_CL_temp;
 					for(int i=0; i<lsize*Dim_x; i++){
+                        // set values to identity matrix
 						CO_I[i][i] = 1.;
+                        // put values into newly truncated vector
 						for(int j=0; j<lsize*Dim_x; j++){
 							CO_CL_temp[i][j] = CO_CL[i][j];
 						}
 					}
+                    // CO_CL now of size ( lsize*Dim_x, lsize*Dim_x, and the values from original vector have been copied over )
     				CO_CL = CO_CL_temp;
     			}
     			vector<vector<double>> CO_CL_temp_D(lsize*Dim_x, vector<double>(lsize*Dim_x, 0));
@@ -1656,19 +1717,25 @@ void XC::Fisher(string probe, string Fisher_matrix_name, int lcut_mn, int lcut_p
 						CO_CL_temp_D[i][j] = CO_CL_D[i][j];
 					}
 				}
+                // truncate CO_CL_D to (lsize*Dim_x, lsize*Dim_x)) and preserve values;
     			CO_CL_D = CO_CL_temp_D;
 			}
 
 			if(probe == "WL"){
 				if(FX == 0 && FY == 0){
 					vector<vector<double>> CO_CL_temp(lsize*Dim_x, vector<double>(lsize*Dim_x, 0));
-					CO_CL_AB = CO_CL_temp; CO_I = CO_CL_temp;
+                    // below vectors truncated to (lsize*Dim_x, lsize*Dim_x)
+					CO_CL_AB = CO_CL_temp;
+                    CO_I = CO_CL_temp;
 					for(int i=lsize*Dim_x; i<2*lsize*Dim_x; i++){
+                        //  set values to the identity matrix
 						CO_I[i-lsize*Dim_x][i-lsize*Dim_x] = 1.;
 						for(int j=lsize*Dim_x; j<2*lsize*Dim_x; j++){
+                            // set values from CO_CL
 							CO_CL_temp[i-lsize*Dim_x][j-lsize*Dim_x] = CO_CL[i][j];
 						}
 					}
+                    // CO_CL has now been truncated to
     				CO_CL = CO_CL_temp;
     			}
     			vector<vector<double>> CO_CL_temp_D(lsize*Dim_x, vector<double>(lsize*Dim_x, 0));
@@ -1679,9 +1746,13 @@ void XC::Fisher(string probe, string Fisher_matrix_name, int lcut_mn, int lcut_p
 				}
     			CO_CL_D = CO_CL_temp_D;
     		}
-			
-			if(FX==0 && FY == 0){
-				cout<<"Begin Cholesky decomposition"<<endl;
+
+            /***************************************************************************************************************************
+            *  STEP F1 : Cholesky decomposition - some issues here
+             *           This code may be executed if previous STEP E1 did NO truncation:
+            ***************************************************************************************************************************/
+            if(FX==0 && FY == 0){
+				cout<<"Begin Cholesky decomposition" <<endl;
                 for(int i=0; i<CO_CL.size(); i++){
                     for(int j=0; j<=i; j++){
                         if((CO_CL[i][0] != 0) || (CO_CL[i][j] != 0) || (j>0 && CO_CL_AB[i][j-1] != 0)){
@@ -1701,14 +1772,17 @@ void XC::Fisher(string probe, string Fisher_matrix_name, int lcut_mn, int lcut_p
                                     }
                                 }
                                 CO_CL_AB[i][j] = (CO_CL[i][j] - sum)/CO_CL_AB[j][j];
-                            }
-                        }
-                    }
-                }
+                            } // end else
+                        } // end if
+                    } // end for j
+                } // end for i
 
     			CO_CL = matrix_inverse(CO_CL_AB, CO_I);
-			}
+			} // end if
 
+            /***************************************************************************************************************************
+            *  STEP G1  add results to Fisher Matrix
+            ***************************************************************************************************************************/
 			for(int i=0; i<CO_CL.size(); i++){
 				for(int j=0; j<CO_CL.size(); j++){
                     if( CO_CL[i][j] != 0 || CO_CL_D[i][j] != 0){
@@ -1717,6 +1791,8 @@ void XC::Fisher(string probe, string Fisher_matrix_name, int lcut_mn, int lcut_p
 				}
 			}
 			Fisher_M[FY][FX] = Fisher_M[FX][FY];
+
+            // reset possibly size and set all elements to zero
 			CO_CL_D = CO_CL_ref;
 
             if(l_max_WL > l_max_GC && probe != "GCp"){
@@ -1783,7 +1859,7 @@ void XC::Fisher(string probe, string Fisher_matrix_name, int lcut_mn, int lcut_p
 				        }
 				    }
                     /***************************************************************************************************************************
-                    *  STEP C2   make  CC_* 2D variables from CC_* 1D variables
+                    *  STEP C2  make  CC_* 2D variables from CC_* 1D variables
                     ***************************************************************************************************************************/
 				    k_vec=0;
 				    for(int i=0; i<Dim_x; i++){
@@ -1795,8 +1871,7 @@ void XC::Fisher(string probe, string Fisher_matrix_name, int lcut_mn, int lcut_p
 				    		k_vec++;
 				    	}
 				    }
-
-                    /***************************************************************************************************************************
+				    /***************************************************************************************************************************
                     *  STEP D2  CO_CL_WL, CO_CL_WL_D  variables populate from  CC_* 2D variables
                     ***************************************************************************************************************************/
                     for(int z1=0; z1<Dim_x; z1++){
@@ -1809,15 +1884,20 @@ void XC::Fisher(string probe, string Fisher_matrix_name, int lcut_mn, int lcut_p
 				    }
 				} // end for lll
 
-
+                /***************************************************************************************************************************
+                *  STEP E2  if probe is  "Wl"  then
+                 *              CO_CL_WL_D is truncated to (lsize2*Dim_x, lsize2*Dim_x)
+                 *             in addition if FX==0 && FY==0 then
+                 *              CO_LL_WL_AB is truncated;
+                 *              CO_CWL_I is truncated
+                 *              CO_CL_WL is truncated
+                ***************************************************************************************************************************/
                 if(probe == "WL"){
 
-                    /***************************************************************************************************************************
-                    * For first loop FX,FY iteration - populate CO_CL_WL_AB, CO_WL_I, CO_CL_WL
-                    ***************************************************************************************************************************/
                     if(FX == 0 && FY == 0){
 						vector<vector<double>> CO_CL_temp(lsize2*Dim_x, vector<double>(lsize2*Dim_x, 0));
-						CO_CL_WL_AB = CO_CL_temp; CO_WL_I = CO_CL_temp;
+						CO_CL_WL_AB = CO_CL_temp;
+                        CO_WL_I = CO_CL_temp;
 						for(int i=0; i<lsize2*Dim_x; i++){
 							CO_WL_I[i][i] = 1.;
 							for(int j=0; j<lsize2*Dim_x; j++){
@@ -1827,7 +1907,6 @@ void XC::Fisher(string probe, string Fisher_matrix_name, int lcut_mn, int lcut_p
 	    				CO_CL_WL = CO_CL_temp;
 	    			}
 
-                    /*************  WTF  **************************************************************************************************************/
 	    			vector<vector<double>> CO_CL_temp_D(lsize2*Dim_x, vector<double>(lsize2*Dim_x, 0));
 	    			for(int i=0; i<lsize2*Dim_x; i++){
 						for(int j=0; j<lsize2*Dim_x; j++){
@@ -1837,8 +1916,13 @@ void XC::Fisher(string probe, string Fisher_matrix_name, int lcut_mn, int lcut_p
 	    			CO_CL_WL_D = CO_CL_temp_D;
 	    		}
 
-				if (FX==0 && FY == 0){
+                /***************************************************************************************************************************
+                *  STEP F2 : Cholesky decomposition - some issues here
+                *           This code may be executed if previous STEP E2 did NO truncation:
+                ***************************************************************************************************************************/
+                if (FX==0 && FY == 0){
 					cout<<"Begin Cholesky decomposition"<<endl;
+                    // iterate though square matrix
 					for(int i=0; i<CO_CL_WL.size(); i++){
 	        			for(int j=0; j<=i; j++){
                             if((CO_CL_WL[i][0] != 0) || (CO_CL_WL[i][j] != 0) || (j>0 && CO_CL_WL_AB[i][j-1] != 0)){
@@ -1867,7 +1951,7 @@ void XC::Fisher(string probe, string Fisher_matrix_name, int lcut_mn, int lcut_p
 				}
 
                 /***************************************************************************************************************************
-                * (re)initialize  Fisher_M
+                * STEP G2  add to Fisher
                 ***************************************************************************************************************************/
                 for(int i=0; i<CO_CL_WL.size(); i++){
 					for(int j=0; j<CO_CL_WL.size(); j++){
@@ -1969,15 +2053,21 @@ void XC::Fisher(string probe, string Fisher_matrix_name, int lcut_mn, int lcut_p
                         }
                     }
                 } //end for lll
-            
-                if(probe == "GCp"){
 
-                    /***************************************************************************************************************************
-                    * For first loop FX,FY iteration - populate CO_CL_WL_AB, CO_WL_I, CO_CL_WL
-                    ***************************************************************************************************************************/
+                /***************************************************************************************************************************
+                *  STEP E3  if probe is  "GCp"  then
+                *              CO_CL_WL_D is truncated to (lsize2*Dim_x, lsize2*Dim_x)
+                *             in addition if FX==0 && FY==0 then
+                *              CO_CL_WL_AB is truncated;
+                *              CO_WL_I is truncated
+                *              CO_CL_WL is truncated
+                ***************************************************************************************************************************/
+                if(probe == "GCp"){
                     if(FX == 0 && FY == 0){
                         vector<vector<double>> CO_CL_temp(lsize2*Dim_x, vector<double>(lsize2*Dim_x, 0));
-                        CO_CL_WL_AB = CO_CL_temp; CO_WL_I = CO_CL_temp;
+                        CO_CL_WL_AB = CO_CL_temp;
+                        CO_WL_I = CO_CL_temp;
+
                         for(int i=0; i<lsize2*Dim_x; i++){
                             CO_WL_I[i][i] = 1.;
                             for(int j=0; j<lsize2*Dim_x; j++){
@@ -1986,8 +2076,6 @@ void XC::Fisher(string probe, string Fisher_matrix_name, int lcut_mn, int lcut_p
                         }
                         CO_CL_WL = CO_CL_temp;
                     }
-
-                    /*************  WTF  **************************************************************************************************************/
                     vector<vector<double>> CO_CL_temp_D(lsize2*Dim_x, vector<double>(lsize2*Dim_x, 0));
                     for(int i=0; i<lsize2*Dim_x; i++){
                         for(int j=0; j<lsize2*Dim_x; j++){
@@ -1997,6 +2085,10 @@ void XC::Fisher(string probe, string Fisher_matrix_name, int lcut_mn, int lcut_p
                     CO_CL_WL_D = CO_CL_temp_D;
                 }
 
+                /***************************************************************************************************************************
+                *  STEP F2 : Cholesky decomposition - some issues here
+                *  This code may be executed if previous STEP E2 did NO truncation:
+                ***************************************************************************************************************************/
                 if (FX==0 && FY == 0){
                     cout<<"Begin Cholesky decomposition"<<endl;
                     for(int i=0; i<CO_CL_WL.size(); i++){
@@ -2023,11 +2115,12 @@ void XC::Fisher(string probe, string Fisher_matrix_name, int lcut_mn, int lcut_p
                         }
                     }
                     CO_CL_WL = matrix_inverse(CO_CL_WL_AB, CO_WL_I);
-                    cout<<"Computing the Fisher matrix elements"<<endl;
+
                 }
                 /***************************************************************************************************************************
-                * (re)initialize  Fisher_M
+                * STEP G3  add to Fisher:
                 ***************************************************************************************************************************/
+                cout<<"Computing the Fisher matrix elements"<<endl;
                 for(int i=0; i<CO_CL_WL.size(); i++){
                     for(int j=0; j<CO_CL_WL.size(); j++){
                         if( CO_CL_WL[i][j] != 0 || CO_CL_WL_D[i][j] != 0){
@@ -2038,6 +2131,7 @@ void XC::Fisher(string probe, string Fisher_matrix_name, int lcut_mn, int lcut_p
                 Fisher_M[FY][FX] = Fisher_M[FX][FY];
             } // end if
 
+            // reset to originla size and all elements to zero
 			CO_CL_WL_D = CO_CL_WL_ref;
 
 		} //end for FY loop
